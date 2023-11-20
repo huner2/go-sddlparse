@@ -1,3 +1,5 @@
+[![GoDoc](https://pkg.go.dev/badge/github.com/go-ldap/ldap?utm_source=godoc)](https://pkg.go.dev/github.com/huner2/go-sddlparse)
+
 # Basic SDDL parsing functionality for AD SDDLs in Go
 
 This library provides functions to parse and modify the [SDDL](https://msdn.microsoft.com/en-us/library/cc230366.aspx) format, centered around Active Directory Access Control Lists (ACLs).
