@@ -79,7 +79,7 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    descriptor := sr.Entries[0].GetAttributeValu    ("nTSecurityDescriptor")
+    descriptor := sr.Entries[0].GetAttributeValue("nTSecurityDescriptor")
     sddl, err := sddlparse.SDDLFromBinary([]byte(descriptor))
     if err != nil {
         log.Fatal(err)
