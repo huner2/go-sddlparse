@@ -83,7 +83,7 @@ type ACL []*ACE
 type SDDL struct {
 	Version      byte
 	ControlFlags uint16
-	// Owner and Group are GUIDs as strings.
+	// Owner and Group are SIDs as strings.
 	Owner string
 	Group string
 	SACL  ACL
