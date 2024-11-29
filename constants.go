@@ -384,7 +384,7 @@ func sidToSDDLAlias(sid string) string {
 		return "ER"
 	} else if strings.HasPrefix(sid, "S-1-5-21-") && strings.HasSuffix(sid, "498") {
 		return "RO"
-	} else if sid == "S-1-5-32-569" {
+	} else if sid == "S-1-5-32-562" {
 		return "CD"
 	} else if sid == "S-1-15-2-1" {
 		return "AC"
@@ -511,7 +511,7 @@ func sddlAliasToSID(alias, domainIdentity, machineIdentity string) (string, erro
 	} else if alias == "RO" {
 		return "S-1-5-21-" + domainIdentity + "-498", nil
 	} else if alias == "CD" {
-		return "S-1-5-32-569", nil
+		return "S-1-5-32-562", nil
 	} else if alias == "AC" {
 		return "S-1-15-2-1", nil
 	} else if alias == "RA" {
