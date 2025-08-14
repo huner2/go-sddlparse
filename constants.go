@@ -104,7 +104,7 @@ func (mask *AccessMask) MustString() (string, error) {
 		maskString += "RC"
 	}
 	if *mask&ACCESS_MASK_DELETE != 0 {
-		maskString += "DE"
+		maskString += "SD"
 	}
 	if *mask&ACCESS_MASK_ADS_RIGHT_DS_CREATE_CHILD != 0 {
 		maskString += "CC"

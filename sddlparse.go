@@ -609,7 +609,7 @@ func aclFromString(sddl, domainIdentity, machineIdentity string) (ACL, int, erro
 				accessMask |= ACCESS_MASK_WRITE_DACL
 			case "RC":
 				accessMask |= ACCESS_MASK_READ_CONTROL
-			case "DE":
+			case "SD":
 				accessMask |= ACCESS_MASK_DELETE
 			case "CC":
 				accessMask |= ACCESS_MASK_ADS_RIGHT_DS_CREATE_CHILD
