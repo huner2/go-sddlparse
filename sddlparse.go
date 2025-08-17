@@ -203,16 +203,14 @@ func aclToBytes(acl ACL) ([]byte, error) {
 	data := make([]byte, 8)
 	data[0] = 0x04
 	binary.LittleEndian.PutUint16(data[4:6], uint16(len(acl)))
-	totalSize := 0
 	for _, ace := range acl {
-		aceData, size, err := aceToBytes(ace)
+		aceData, _, err := aceToBytes(ace)
 		if err != nil {
 			return nil, err
 		}
 		data = append(data, aceData...)
-		totalSize += int(size)
 	}
-	binary.LittleEndian.PutUint16(data[2:4], uint16(totalSize))
+	binary.LittleEndian.PutUint16(data[2:4], uint16(len(data)))
 	return data, nil
 }
 
