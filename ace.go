@@ -3,6 +3,9 @@ package sddlparse
 import (
 	"encoding/binary"
 	"errors"
+
+	conditionalparser "github.com/huner2/go-sddlparse/internal/conditionalParser"
+	"github.com/huner2/go-sddlparse/internal/util"
 )
 
 func aceFromBytes(data []byte) (*ACE, uint16, error) {
@@ -124,7 +127,7 @@ func accessAceFromBytes(data []byte) (*ACE, error) {
 		return nil, errors.New(errInvalidACE)
 	}
 	accessMask := binary.LittleEndian.Uint32(data[0:4])
-	sid, _, err := sidFromLEBytes(data[4:])
+	sid, _, err := util.SidFromLEBytes(data[4:])
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +140,7 @@ func accessAceFromBytes(data []byte) (*ACE, error) {
 func accessAceToBytes(ace *ACE) ([]byte, error) {
 	data := make([]byte, 4)
 	binary.LittleEndian.PutUint32(data[0:4], uint32(ace.AccessMask))
-	sid, err := sidToLEBytes(ace.SID)
+	sid, err := util.SidToLEBytes(ace.SID)
 	if err != nil {
 		return nil, err
 	}
@@ -159,26 +162,26 @@ func accessObjectAceFromBytes(data []byte) (*ACE, error) {
 	accessMask := binary.LittleEndian.Uint32(data[0:4])
 	uniqueFlags := ObjectFlag(binary.LittleEndian.Uint32(data[4:8]))
 
-	var objectType GUID
-	var inheritedObjectType GUID
+	var objectType util.GUID
+	var inheritedObjectType util.GUID
 
 	start := 8
 
 	if uniqueFlags&ACE_OBJECT_TYPE_PRESENT != 0 {
-		objectType, err = guidFromBytes(data[8:24])
+		objectType, err = util.GuidFromBytes(data[8:24])
 		if err != nil {
 			return nil, err
 		}
 		start += 16
 	}
 	if uniqueFlags&ACE_INHERITED_OBJECT_TYPE_PRESENT != 0 {
-		inheritedObjectType, err = guidFromBytes(data[start : start+16])
+		inheritedObjectType, err = util.GuidFromBytes(data[start : start+16])
 		if err != nil {
 			return nil, err
 		}
 		start += 16
 	}
-	sid, _, err := sidFromLEBytes(data[start:])
+	sid, _, err := util.SidFromLEBytes(data[start:])
 	if err != nil {
 		return nil, err
 	}
@@ -197,14 +200,14 @@ func accessObjectAceToBytes(ace *ACE) ([]byte, error) {
 	data = append(data, make([]byte, 4)...)
 	binary.LittleEndian.PutUint32(data[4:8], uint32(ace.ObjectFlags))
 	if ace.ObjectFlags&ACE_OBJECT_TYPE_PRESENT != 0 {
-		objectType := guidToBytes(ace.ObjectType)
+		objectType := util.GuidToBytes(ace.ObjectType)
 		data = append(data, objectType...)
 	}
 	if ace.ObjectFlags&ACE_INHERITED_OBJECT_TYPE_PRESENT != 0 {
-		inheritedObjectType := guidToBytes(ace.InheritedObjectType)
+		inheritedObjectType := util.GuidToBytes(ace.InheritedObjectType)
 		data = append(data, inheritedObjectType...)
 	}
-	sid, err := sidToLEBytes(ace.SID)
+	sid, err := util.SidToLEBytes(ace.SID)
 	if err != nil {
 		return nil, err
 	}
@@ -221,7 +224,7 @@ func accessCallbackAceFromBytes(data []byte) (*ACE, error) {
 		return nil, errors.New(errInvalidACE)
 	}
 	accessMask := binary.LittleEndian.Uint32(data[0:4])
-	sid, length, err := sidFromLEBytes(data[4:])
+	sid, length, err := util.SidFromLEBytes(data[4:])
 	if err != nil {
 		return nil, err
 	}
@@ -229,22 +232,36 @@ func accessCallbackAceFromBytes(data []byte) (*ACE, error) {
 	if len(data) > 4+int(length) {
 		ApplicationData = data[4+length:]
 	}
+	var conditional *conditionalparser.ConditionalExpression
+	if len(ApplicationData) > 0 {
+		conditional, err = conditionalparser.ParseApplicationData(ApplicationData)
+		if err != nil {
+			return nil, err
+		}
+	}
 	return &ACE{
 		AccessMask:      AccessMask(accessMask),
 		SID:             sid,
-		ApplicationData: ApplicationData,
+		ApplicationData: conditional,
 	}, nil
 }
 
 func accessCallbackAceToBytes(ace *ACE) ([]byte, error) {
 	data := make([]byte, 4)
 	binary.LittleEndian.PutUint32(data[0:4], uint32(ace.AccessMask))
-	sid, err := sidToLEBytes(ace.SID)
+	sid, err := util.SidToLEBytes(ace.SID)
 	if err != nil {
 		return nil, err
 	}
 	data = append(data, sid...)
-	data = append(data, ace.ApplicationData...)
+	var appDataBytes []byte
+	if ace.ApplicationData != nil {
+		appDataBytes, err = ace.ApplicationData.ToBytes()
+		if err != nil {
+			return nil, err
+		}
+	}
+	data = append(data, appDataBytes...)
 
 	return data, nil
 }
@@ -263,26 +280,26 @@ func accessCallbackObjectAceFromBytes(data []byte) (*ACE, error) {
 	uniqueFlags := ObjectFlag(binary.LittleEndian.Uint32(data[4:8]))
 
 	var err error
-	var objectType GUID
-	var inheritedObjectType GUID
+	var objectType util.GUID
+	var inheritedObjectType util.GUID
 
 	start := 8
 
 	if uniqueFlags&ACE_OBJECT_TYPE_PRESENT != 0 {
-		objectType, err = guidFromBytes(data[8:24])
+		objectType, err = util.GuidFromBytes(data[8:24])
 		if err != nil {
 			return nil, err
 		}
 		start += 16
 	}
 	if uniqueFlags&ACE_INHERITED_OBJECT_TYPE_PRESENT != 0 {
-		inheritedObjectType, err = guidFromBytes(data[start : start+16])
+		inheritedObjectType, err = util.GuidFromBytes(data[start : start+16])
 		if err != nil {
 			return nil, err
 		}
 		start += 16
 	}
-	sid, length, err := sidFromLEBytes(data[start:])
+	sid, length, err := util.SidFromLEBytes(data[start:])
 	if err != nil {
 		return nil, err
 	}
@@ -291,13 +308,21 @@ func accessCallbackObjectAceFromBytes(data []byte) (*ACE, error) {
 		ApplicationData = data[length:]
 	}
 
+	var conditional *conditionalparser.ConditionalExpression
+	if len(ApplicationData) > 0 {
+		conditional, err = conditionalparser.ParseApplicationData(ApplicationData)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &ACE{
 		AccessMask:          AccessMask(accessMask),
 		SID:                 sid,
 		ObjectType:          objectType,
 		InheritedObjectType: inheritedObjectType,
 		ObjectFlags:         uniqueFlags,
-		ApplicationData:     ApplicationData,
+		ApplicationData:     conditional,
 	}, nil
 }
 
@@ -308,21 +333,28 @@ func accessCallbackObjectAceToBytes(ace *ACE) ([]byte, error) {
 	binary.LittleEndian.PutUint32(data[4:8], uint32(ace.ObjectFlags))
 	if ace.ObjectFlags&ACE_OBJECT_TYPE_PRESENT != 0 {
 
-		objectType := guidToBytes(ace.ObjectType)
+		objectType := util.GuidToBytes(ace.ObjectType)
 		data = append(data, objectType...)
 	}
 	if ace.ObjectFlags&ACE_INHERITED_OBJECT_TYPE_PRESENT != 0 {
 
-		inheritedObjectType := guidToBytes(ace.InheritedObjectType)
+		inheritedObjectType := util.GuidToBytes(ace.InheritedObjectType)
 		data = append(data, inheritedObjectType...)
 	}
-	sid, err := sidToLEBytes(ace.SID)
+	sid, err := util.SidToLEBytes(ace.SID)
 	if err != nil {
 		return nil, err
 	}
 	data = append(data, sid...)
 
-	data = append(data, ace.ApplicationData...)
+	var appDataBytes []byte
+	if ace.ApplicationData != nil {
+		appDataBytes, err = ace.ApplicationData.ToBytes()
+		if err != nil {
+			return nil, err
+		}
+	}
+	data = append(data, appDataBytes...)
 
 	return data, nil
 }
@@ -335,7 +367,7 @@ func systemResourceAttributeAceFromBytes(data []byte) (*ACE, error) {
 		return nil, errors.New(errInvalidACE)
 	}
 	accessMask := binary.LittleEndian.Uint32(data[0:4])
-	sid, length, err := sidFromLEBytes(data[4:])
+	sid, length, err := util.SidFromLEBytes(data[4:])
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +385,7 @@ func systemResourceAttributeAceFromBytes(data []byte) (*ACE, error) {
 func systemResourceAttributeAceToBytes(ace *ACE) ([]byte, error) {
 	data := make([]byte, 4)
 	binary.LittleEndian.PutUint32(data[0:4], uint32(ace.AccessMask))
-	sid, err := sidToLEBytes(ace.SID)
+	sid, err := util.SidToLEBytes(ace.SID)
 	if err != nil {
 		return nil, err
 	}

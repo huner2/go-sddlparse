@@ -11,6 +11,8 @@ This library provides functions to parse and modify the [SDDL](https://msdn.micr
 * Convert the structured format back to SDDL strings
 * Parse SDDL binary data into a structured format
 * Convert the structured format back to SDDL binary data
+* Support for conditional ACEs
+* Support for creating/modifying conditional ACEs
 
 ## Usage
 

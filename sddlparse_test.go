@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/huner2/go-sddlparse"
+	"github.com/huner2/go-sddlparse/internal/util"
 )
 
 func TestB64SDDLSmall(t *testing.T) {
@@ -56,7 +58,7 @@ func TestB64SDDLSmallStr(t *testing.T) {
 func TestParseGUID(t *testing.T) {
 	guidStrRandom := "f8a0b131-5f68-486c-8040-7e8fc3c85e4f"
 
-	guid, err := sddlparse.GuidFromString(guidStrRandom)
+	guid, err := util.GuidFromString(guidStrRandom)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -136,5 +138,86 @@ func TestModifySmallStr(t *testing.T) {
 	}
 	if sddlParsedStr != sddlStr+"(A;OI;GA;;;S-1-2-3-4)" {
 		t.Fatal("sddl string isn't equal")
+	}
+}
+
+func TestBinaryConditionalToSDDL(t *testing.T) {
+	b64, err := os.ReadFile("./testdata/conditional_test_data.b64")
+	if err != nil {
+		t.Fatal(err)
+	}
+	sddl, err := sddlparse.SDDLFromBase64Encoded(b64)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sddlStr, err := sddl.MustString()
+	if err != nil {
+		t.Fatal(err)
+	}
+	compareStr, err := os.ReadFile("./testdata/conditional_test.sddl")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if sddlStr != string(compareStr) {
+		t.Fatal("sddl string is not equal")
+	}
+}
+
+func TestParseConditional(t *testing.T) {
+	sddl, err := os.ReadFile("./testdata/conditional_test.sddl")
+	if err != nil {
+		t.Fatal(err)
+	}
+	sddlStr := string(sddl)
+	sddlParsed, err := sddlparse.SDDLFromString(sddlStr, "0", "0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	sddlParsedStr, err := sddlParsed.MustString()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if sddlParsedStr != sddlStr {
+		t.Fatal("sddl string is not equal")
+	}
+}
+
+func TestParseConditionalSet(t *testing.T) {
+	sddlListRaw, err := os.ReadFile("./testdata/conditional_test_fakeset.sddl")
+	if err != nil {
+		t.Fatal(err)
+	}
+	sddList := strings.Split(string(sddlListRaw), "\n")
+	for _, sddlStr := range sddList {
+		if strings.TrimSpace(sddlStr) == "" {
+			continue
+		}
+
+		sddlParsed, err := sddlparse.SDDLFromString(sddlStr, "0", "0")
+		if err != nil {
+			t.Fatalf("error parsing sddl: %v", err)
+		}
+		sddlParsedStr, err := sddlParsed.MustString()
+		if err != nil {
+			t.Fatalf("error converting sddl to string: %v", err)
+		}
+		if sddlParsedStr != sddlStr {
+			t.Fatalf("sddl string is not equal:\nexpected: %s\ngot:      %s", sddlStr, sddlParsedStr)
+		}
+		b64, err := sddlParsed.ToBase64Encoded()
+		if err != nil {
+			t.Fatalf("error converting sddl to binary: %v", err)
+		}
+		sddlParsed2, err := sddlparse.SDDLFromBase64Encoded(b64)
+		if err != nil {
+			t.Fatalf("error parsing binary sddl: %v", err)
+		}
+		sddlParsedStr2, err := sddlParsed2.MustString()
+		if err != nil {
+			t.Fatalf("error converting binary sddl to string: %v", err)
+		}
+		if sddlParsedStr2 != sddlStr {
+			t.Fatalf("sddl string from binary is not equal:\nexpected: %s\ngot:      %s", sddlStr, sddlParsedStr2)
+		}
 	}
 }

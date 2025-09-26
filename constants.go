@@ -7,10 +7,8 @@ import (
 
 // Error messages
 const errInvalidSDDL = "invalid SDDL"
-const errInvalidSID = "invalid SID"
 const errInvalidACE = "invalid ACE"
 const errInvalidACL = "invalid ACL"
-const errInvalidGUID = "invalid GUID"
 
 // SDDL Control Flags
 const (
@@ -73,44 +71,16 @@ func (mask *AccessMask) String() string {
 // or it doesn't have a string representation, it returns an error.
 func (mask *AccessMask) MustString() (string, error) {
 	maskString := ""
-	if *mask&ACCESS_MASK_GENERIC_READ != 0 {
-		maskString += "GR"
-	}
-	if *mask&ACCESS_MASK_GENERIC_WRITE != 0 {
-		maskString += "GW"
-	}
-	if *mask&ACCESS_MASK_GENERIC_EXECUTE != 0 {
-		maskString += "GX"
-	}
-	if *mask&ACCESS_MASK_GENERIC_ALL != 0 {
-		maskString += "GA"
-	}
-	if *mask&ACCESS_MASK_MAXIMUM_ALLOWED != 0 {
-		maskString += "MA"
-	}
-	if *mask&ACCESS_MASK_ACCESS_SYSTEM_SECURITY != 0 {
-		maskString += "AS"
-	}
-	if *mask&ACCESS_MASK_SYNCHRONIZE != 0 {
-		maskString += "SY"
-	}
-	if *mask&ACCESS_MASK_WRITE_OWNER != 0 {
-		maskString += "WO"
-	}
-	if *mask&ACCESS_MASK_WRITE_DACL != 0 {
-		maskString += "WD"
-	}
-	if *mask&ACCESS_MASK_READ_CONTROL != 0 {
-		maskString += "RC"
-	}
-	if *mask&ACCESS_MASK_DELETE != 0 {
-		maskString += "SD"
-	}
+
+	// Order: lowest to highest value as declared by the constants
 	if *mask&ACCESS_MASK_ADS_RIGHT_DS_CREATE_CHILD != 0 {
 		maskString += "CC"
 	}
 	if *mask&ACCESS_MASK_ADS_RIGHT_DS_DELETE_CHILD != 0 {
 		maskString += "DC"
+	}
+	if *mask&ACCESS_MASK_ADS_RIGHT_DS_LIST_CONTENTS != 0 {
+		maskString += "LC"
 	}
 	if *mask&ACCESS_MASK_ADS_RIGHT_DS_SELF != 0 {
 		maskString += "SW"
@@ -121,18 +91,49 @@ func (mask *AccessMask) MustString() (string, error) {
 	if *mask&ACCESS_MASK_ADS_RIGHT_DS_WRITE_PROP != 0 {
 		maskString += "WP"
 	}
-	if *mask&ACCESS_MASK_ADS_RIGHT_DS_CONTROL_ACCESS != 0 {
-		maskString += "CR"
-	}
-	if *mask&ACCESS_MASK_ADS_RIGHT_DS_LIST_CONTENTS != 0 {
-		maskString += "LC"
-	}
 	if *mask&ACCESS_MASK_ADS_RIGHT_DS_DELETE_TREE != 0 {
 		maskString += "DT"
 	}
 	if *mask&ACCESS_MASK_ADS_RIGHT_DS_LIST_OBJECT != 0 {
 		maskString += "LO"
 	}
+	if *mask&ACCESS_MASK_ADS_RIGHT_DS_CONTROL_ACCESS != 0 {
+		maskString += "CR"
+	}
+	if *mask&ACCESS_MASK_DELETE != 0 {
+		maskString += "SD"
+	}
+	if *mask&ACCESS_MASK_READ_CONTROL != 0 {
+		maskString += "RC"
+	}
+	if *mask&ACCESS_MASK_WRITE_DACL != 0 {
+		maskString += "WD"
+	}
+	if *mask&ACCESS_MASK_WRITE_OWNER != 0 {
+		maskString += "WO"
+	}
+	if *mask&ACCESS_MASK_SYNCHRONIZE != 0 {
+		maskString += "SY"
+	}
+	if *mask&ACCESS_MASK_ACCESS_SYSTEM_SECURITY != 0 {
+		maskString += "AS"
+	}
+	if *mask&ACCESS_MASK_MAXIMUM_ALLOWED != 0 {
+		maskString += "MA"
+	}
+	if *mask&ACCESS_MASK_GENERIC_ALL != 0 {
+		maskString += "GA"
+	}
+	if *mask&ACCESS_MASK_GENERIC_EXECUTE != 0 {
+		maskString += "GX"
+	}
+	if *mask&ACCESS_MASK_GENERIC_WRITE != 0 {
+		maskString += "GW"
+	}
+	if *mask&ACCESS_MASK_GENERIC_READ != 0 {
+		maskString += "GR"
+	}
+
 	if maskString == "" && *mask != 0 {
 		return "", fmt.Errorf("unknown access mask: %08x", *mask)
 	}

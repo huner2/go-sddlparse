@@ -1,4 +1,4 @@
-package sddlparse
+package util
 
 import (
 	"encoding/binary"
@@ -8,7 +8,10 @@ import (
 	"strings"
 )
 
-func sidFromLEBytes(data []byte) (string, uint32, error) {
+const errInvalidSID = "invalid SID"
+const errInvalidGUID = "invalid GUID"
+
+func SidFromLEBytes(data []byte) (string, uint32, error) {
 	if len(data) < 8 {
 
 		return "", 0, errors.New(errInvalidSID)
@@ -31,7 +34,7 @@ func sidFromLEBytes(data []byte) (string, uint32, error) {
 	return "S-1-" + fmt.Sprint(identifierAuthority) + "-" + strings.Join(subAuthorities, "-"), uint32(8 + subAuthorityCount*4), nil
 }
 
-func sidToLEBytes(sid string) ([]byte, error) {
+func SidToLEBytes(sid string) ([]byte, error) {
 	if len(sid) == 0 {
 		data := make([]byte, 8)
 		data[0] = 0x01
@@ -40,7 +43,6 @@ func sidToLEBytes(sid string) ([]byte, error) {
 	sid = strings.TrimPrefix(sid, "S-1-")
 	sections := strings.Split(sid, "-")
 	if len(sections) < 2 || len(sections) > 15 {
-
 		return nil, errors.New(errInvalidSID)
 	}
 	identifierAuthority, err := strconv.ParseUint(sections[0], 10, 48)
@@ -84,7 +86,7 @@ type GUID struct {
 	Data4 [8]byte
 }
 
-func guidFromBytes(data []byte) (GUID, error) {
+func GuidFromBytes(data []byte) (GUID, error) {
 	if len(data) < 16 {
 		return GUID{}, errors.New(errInvalidGUID)
 	}
@@ -96,7 +98,7 @@ func guidFromBytes(data []byte) (GUID, error) {
 	}, nil
 }
 
-func guidToBytes(guid GUID) []byte {
+func GuidToBytes(guid GUID) []byte {
 	data := make([]byte, 16)
 	binary.LittleEndian.PutUint32(data[0:4], guid.Data1)
 	binary.LittleEndian.PutUint16(data[4:6], guid.Data2)

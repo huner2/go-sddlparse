@@ -4,6 +4,9 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"errors"
+
+	conditionalparser "github.com/huner2/go-sddlparse/internal/conditionalParser"
+	"github.com/huner2/go-sddlparse/internal/util"
 )
 
 // ACE is an Access Control Entry.
@@ -19,12 +22,12 @@ type ACE struct {
 	SID        string
 
 	// Object-specific fields
-	ObjectType          GUID
-	InheritedObjectType GUID
+	ObjectType          util.GUID
+	InheritedObjectType util.GUID
 	ObjectFlags         ObjectFlag
 
 	// Callback-specific fields
-	ApplicationData []byte
+	ApplicationData *conditionalparser.ConditionalExpression
 
 	// System-resource-specific fields
 	AttributeData []byte
@@ -69,6 +72,22 @@ func (ace *ACE) MustString() (string, error) {
 	}
 	str += ";"
 	str += sidToSDDLAlias(ace.SID)
+	if ace.Type == ACETYPE_ACCESS_ALLOWED_CALLBACK ||
+		ace.Type == ACETYPE_ACCESS_DENIED_CALLBACK ||
+		ace.Type == ACETYPE_ACCESS_ALLOWED_CALLBACK_OBJECT ||
+		ace.Type == ACETYPE_ACCESS_DENIED_CALLBACK_OBJECT ||
+		ace.Type == ACETYPE_SYSTEM_AUDIT_CALLBACK ||
+		ace.Type == ACETYPE_SYSTEM_AUDIT_CALLBACK_OBJECT {
+		str += ";"
+
+		if ace.ApplicationData != nil {
+			appStr, err := ace.ApplicationData.ToInfixString()
+			if err != nil {
+				return "", err
+			}
+			str += "(" + appStr + ")"
+		}
+	}
 	return "(" + str + ")", nil
 }
 
@@ -246,7 +265,7 @@ func SDDLFromBinary(data []byte) (*SDDL, error) {
 	daclOffset := binary.LittleEndian.Uint32(data[16:20])
 
 	if ownerOffset != 0 {
-		owner, _, err := sidFromLEBytes(data[ownerOffset:])
+		owner, _, err := util.SidFromLEBytes(data[ownerOffset:])
 		if err != nil {
 
 			return nil, err
@@ -255,7 +274,7 @@ func SDDLFromBinary(data []byte) (*SDDL, error) {
 	}
 
 	if groupOffset != 0 {
-		group, _, err := sidFromLEBytes(data[groupOffset:])
+		group, _, err := util.SidFromLEBytes(data[groupOffset:])
 		if err != nil {
 
 			return nil, err
@@ -304,7 +323,10 @@ func SDDLFromBase64Encoded(data []byte) (*SDDL, error) {
 // Machine identity is likely unnecessary for any active directory SDDLs,
 // whereas domain identity is likely unnecessary for any local machine results.
 func SDDLFromString(sddl, domainIdentity, machineIdentity string) (*SDDL, error) {
-	obj := &SDDL{}
+	// Have to explicitly set version to 1 here, as it's not included in the string.
+	obj := &SDDL{
+		Version: 0x1,
+	}
 	datalen := len(sddl)
 
 	if datalen < 2 {
@@ -648,7 +670,7 @@ func aclFromString(sddl, domainIdentity, machineIdentity string) (ACL, int, erro
 				return nil, 0, errors.New(errInvalidACL)
 			}
 			objectGuid := sddl[i+parsedLen : i+parsedLen+36]
-			guid, err := GuidFromString(objectGuid)
+			guid, err := util.GuidFromString(objectGuid)
 			if err != nil {
 				return nil, 0, err
 			}
@@ -670,7 +692,7 @@ func aclFromString(sddl, domainIdentity, machineIdentity string) (ACL, int, erro
 				return nil, 0, errors.New(errInvalidACL)
 			}
 			objectGuid := sddl[i+parsedLen : i+parsedLen+36]
-			guid, err := GuidFromString(objectGuid)
+			guid, err := util.GuidFromString(objectGuid)
 			if err != nil {
 				return nil, 0, err
 			}
@@ -714,6 +736,44 @@ func aclFromString(sddl, domainIdentity, machineIdentity string) (ACL, int, erro
 		if i+parsedLen >= datalen {
 			return nil, 0, errors.New(errInvalidACL)
 		}
+		if curAce.Type == ACETYPE_ACCESS_ALLOWED_CALLBACK ||
+			curAce.Type == ACETYPE_ACCESS_DENIED_CALLBACK ||
+			curAce.Type == ACETYPE_ACCESS_ALLOWED_CALLBACK_OBJECT ||
+			curAce.Type == ACETYPE_ACCESS_DENIED_CALLBACK_OBJECT ||
+			curAce.Type == ACETYPE_SYSTEM_AUDIT_CALLBACK ||
+			curAce.Type == ACETYPE_SYSTEM_AUDIT_CALLBACK_OBJECT {
+			if i+parsedLen+2 > datalen {
+				return nil, 0, errors.New(errInvalidACL)
+			}
+			openCount := 0
+			closedCount := 0
+			conditionalString := ""
+			if sddl[i+parsedLen] != ';' || sddl[i+parsedLen+1] != '(' {
+				return nil, 0, errors.New(errInvalidACL)
+			}
+			parsedLen += 1
+			for j := i + parsedLen; j < datalen; j++ {
+				if sddl[j] == '(' {
+					openCount++
+				} else if sddl[j] == ')' {
+					closedCount++
+				}
+				conditionalString += string(sddl[j])
+				if openCount > 0 && openCount == closedCount {
+					parsedLen += j - (i + parsedLen) + 1
+					break
+				}
+			}
+			if openCount != closedCount {
+				return nil, 0, errors.New(errInvalidACL)
+			}
+			condExpr, err := conditionalparser.ParseConditionalExpression(conditionalString)
+			if err != nil {
+				return nil, 0, err
+			}
+			curAce.ApplicationData = condExpr
+		}
+
 		if sddl[i+parsedLen] != ')' {
 			return nil, 0, errors.New(errInvalidACL)
 		}
@@ -756,9 +816,8 @@ func (sddl *SDDL) ToBinary() ([]byte, error) {
 	data = append(data, 0x00, 0x00, 0x00, 0x00) // DACL offset
 
 	if sddl.Owner != "" {
-		sid, err := sidToLEBytes(sddl.Owner)
+		sid, err := util.SidToLEBytes(sddl.Owner)
 		if err != nil {
-
 			return nil, err
 		}
 		data = append(data, sid...)
@@ -767,9 +826,8 @@ func (sddl *SDDL) ToBinary() ([]byte, error) {
 	}
 
 	if sddl.Group != "" {
-		sid, err := sidToLEBytes(sddl.Group)
+		sid, err := util.SidToLEBytes(sddl.Group)
 		if err != nil {
-
 			return nil, err
 		}
 		data = append(data, sid...)
@@ -780,7 +838,6 @@ func (sddl *SDDL) ToBinary() ([]byte, error) {
 	if sddl.SACL != nil {
 		sacl, err := aclToBytes(sddl.SACL)
 		if err != nil {
-
 			return nil, err
 		}
 		data = append(data, sacl...)
@@ -791,7 +848,6 @@ func (sddl *SDDL) ToBinary() ([]byte, error) {
 	if sddl.DACL != nil {
 		dacl, err := aclToBytes(sddl.DACL)
 		if err != nil {
-
 			return nil, err
 		}
 		data = append(data, dacl...)
@@ -814,4 +870,10 @@ func (sddl *SDDL) ToBase64Encoded() ([]byte, error) {
 	b64 := make([]byte, base64.StdEncoding.EncodedLen(len(bin)))
 	base64.StdEncoding.Encode(b64, bin)
 	return b64, nil
+}
+
+// CreateConditionalExpression creates a conditional expression from a string.
+// This can be used to create (or modify) the ApplicationData field of a conditional ACE.
+func CreateConditionalExpression(condStr string) (*conditionalparser.ConditionalExpression, error) {
+	return conditionalparser.ParseConditionalExpression(condStr)
 }

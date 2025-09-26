@@ -1,0 +1,450 @@
+{
+  "Version": 1,
+  "ControlFlags": 32772,
+  "Owner": "S-1-5-18",
+  "Group": "S-1-5-18",
+  "SACL": null,
+  "DACL": [
+    {
+      "Type": 0,
+      "Flags": 0,
+      "AccessMask": 131469,
+      "SID": "S-1-5-4",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": null,
+      "AttributeData": null
+    },
+    {
+      "Type": 0,
+      "Flags": 0,
+      "AccessMask": 131469,
+      "SID": "S-1-5-6",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": null,
+      "AttributeData": null
+    },
+    {
+      "Type": 0,
+      "Flags": 0,
+      "AccessMask": 983551,
+      "SID": "S-1-5-18",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": null,
+      "AttributeData": null
+    },
+    {
+      "Type": 0,
+      "Flags": 0,
+      "AccessMask": 983551,
+      "SID": "S-1-5-32-544",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": null,
+      "AttributeData": null
+    },
+    {
+      "Type": 0,
+      "Flags": 0,
+      "AccessMask": 20,
+      "SID": "S-1-15-3-1024-2158456844-3754929254-744589270-3611187126-2481208986-30837703-3416168463-2437063433",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": null,
+      "AttributeData": null
+    },
+    {
+      "Type": 0,
+      "Flags": 0,
+      "AccessMask": 20,
+      "SID": "S-1-5-4",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": null,
+      "AttributeData": null
+    },
+    {
+      "Type": 0,
+      "Flags": 0,
+      "AccessMask": 20,
+      "SID": "S-1-5-32-2158456844-3754929254-744589270-3611187126-2481208986-30837703-3416168463-2437063433",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": null,
+      "AttributeData": null
+    },
+    {
+      "Type": 9,
+      "Flags": 0,
+      "AccessMask": 52,
+      "SID": "S-1-15-3-1024-3842824567-178914259-466740046-159386189-4235713590-3349026085-1947878110-3889710422",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": {
+        "Conditions": [
+          {
+            "TokenType": 248,
+            "Base": 0,
+            "Sign": 0,
+            "Length": 46,
+            "Value": "WIN://ISMULTISESSIONSKU"
+          },
+          {
+            "TokenType": 162,
+            "Base": 0,
+            "Sign": 0,
+            "Length": 0,
+            "Value": null
+          }
+        ]
+      },
+      "AttributeData": null
+    },
+    {
+      "Type": 9,
+      "Flags": 0,
+      "AccessMask": 52,
+      "SID": "S-1-5-4",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": {
+        "Conditions": [
+          {
+            "TokenType": 248,
+            "Base": 0,
+            "Sign": 0,
+            "Length": 46,
+            "Value": "WIN://ISMULTISESSIONSKU"
+          },
+          {
+            "TokenType": 162,
+            "Base": 0,
+            "Sign": 0,
+            "Length": 0,
+            "Value": null
+          }
+        ]
+      },
+      "AttributeData": null
+    },
+    {
+      "Type": 9,
+      "Flags": 0,
+      "AccessMask": 52,
+      "SID": "S-1-5-32-3842824567-178914259-466740046-159386189-4235713590-3349026085-1947878110-3889710422",
+      "ObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "InheritedObjectType": {
+        "Data1": 0,
+        "Data2": 0,
+        "Data3": 0,
+        "Data4": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "ObjectFlags": 0,
+      "ApplicationData": {
+        "Conditions": [
+          {
+            "TokenType": 248,
+            "Base": 0,
+            "Sign": 0,
+            "Length": 46,
+            "Value": "WIN://ISMULTISESSIONSKU"
+          },
+          {
+            "TokenType": 162,
+            "Base": 0,
+            "Sign": 0,
+            "Length": 0,
+            "Value": null
+          }
+        ]
+      },
+      "AttributeData": null
+    }
+  ]
+}
