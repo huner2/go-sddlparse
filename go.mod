@@ -1,4 +1,4 @@
-module github.com/huner2/go-sddlparse
+module github.com/huner2/go-sddlparse/v2
 
 go 1.24.0
 
