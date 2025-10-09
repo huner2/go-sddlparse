@@ -24,7 +24,7 @@ parse the binary data into a structured format:
 package main
 
 import (
-    parser "github.com/huner2/go-sddlparse"
+    parser "github.com/huner2/go-sddlparse/v2"
 )
 
 func main() {
@@ -58,7 +58,7 @@ package main
 
 import (
     "github.com/go-ldap/ldap/v3"
-    parser "github.com/huner2/go-sddlparse"
+    parser "github.com/huner2/go-sddlparse/v2"
     "log"
 )
 
