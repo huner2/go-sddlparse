@@ -4,8 +4,8 @@ import (
 	"encoding/binary"
 	"errors"
 
-	conditionalparser "github.com/huner2/go-sddlparse/internal/conditionalParser"
-	"github.com/huner2/go-sddlparse/internal/util"
+	conditionalparser "github.com/huner2/go-sddlparse/v2/internal/conditionalParser"
+	"github.com/huner2/go-sddlparse/v2/internal/util"
 )
 
 func aceFromBytes(data []byte) (*ACE, uint16, error) {

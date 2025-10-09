@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/huner2/go-sddlparse"
-	"github.com/huner2/go-sddlparse/internal/util"
+	"github.com/huner2/go-sddlparse/v2"
+	"github.com/huner2/go-sddlparse/v2/internal/util"
 )
 
 func TestB64SDDLSmall(t *testing.T) {

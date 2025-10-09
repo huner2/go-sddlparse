@@ -10,7 +10,7 @@ import (
 	"unicode/utf16"
 
 	"github.com/antlr4-go/antlr/v4"
-	"github.com/huner2/go-sddlparse/internal/util"
+	"github.com/huner2/go-sddlparse/v2/internal/util"
 )
 
 /*

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/huner2/go-sddlparse"
+	"github.com/huner2/go-sddlparse/v2"
 )
 
 func main() {
