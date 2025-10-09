@@ -1,16 +1,16 @@
 [![GoDoc](https://pkg.go.dev/badge/github.com/go-ldap/ldap?utm_source=godoc)](https://pkg.go.dev/github.com/huner2/go-sddlparse)
 
-# Basic SDDL parsing functionality for AD SDDLs in Go
+# ACL and SDDL parsing functionality for Windows and ActiveDirectory ACLs in Go
 
-This library provides functions to parse and modify the [SDDL](https://msdn.microsoft.com/en-us/library/cc230366.aspx) format, centered around Active Directory Access Control Lists (ACLs).
+This library provides functions to parse and modify the [Security Descriptors](https://msdn.microsoft.com/en-us/library/cc230366.aspx) found in Windows and Active Directory.
 
 ## Features
 
 * Parse SDDL strings into a structured format
 * Modify the structured format
 * Convert the structured format back to SDDL strings
-* Parse SDDL binary data into a structured format
-* Convert the structured format back to SDDL binary data
+* Parse security descriptor binary data into a structured format
+* Convert the structured format back to security descriptor binary data
 * Support for conditional ACEs
 * Support for creating/modifying conditional ACEs
 
