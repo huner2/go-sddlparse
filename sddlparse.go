@@ -265,6 +265,9 @@ func SDDLFromBinary(data []byte) (*SDDL, error) {
 	daclOffset := binary.LittleEndian.Uint32(data[16:20])
 
 	if ownerOffset != 0 {
+		if ownerOffset >= uint32(len(data)) {
+			return nil, errors.New(errInvalidSDDL)
+		}
 		owner, _, err := util.SidFromLEBytes(data[ownerOffset:])
 		if err != nil {
 
@@ -274,6 +277,9 @@ func SDDLFromBinary(data []byte) (*SDDL, error) {
 	}
 
 	if groupOffset != 0 {
+		if groupOffset >= uint32(len(data)) {
+			return nil, errors.New(errInvalidSDDL)
+		}
 		group, _, err := util.SidFromLEBytes(data[groupOffset:])
 		if err != nil {
 
@@ -283,6 +289,9 @@ func SDDLFromBinary(data []byte) (*SDDL, error) {
 	}
 
 	if saclOffset != 0 {
+		if saclOffset >= uint32(len(data)) {
+			return nil, errors.New(errInvalidSDDL)
+		}
 		sacl, err := aclFromBytes(data[saclOffset:])
 		if err != nil {
 
@@ -292,6 +301,9 @@ func SDDLFromBinary(data []byte) (*SDDL, error) {
 	}
 
 	if daclOffset != 0 {
+		if daclOffset >= uint32(len(data)) {
+			return nil, errors.New(errInvalidSDDL)
+		}
 		dacl, err := aclFromBytes(data[daclOffset:])
 		if err != nil {
 
