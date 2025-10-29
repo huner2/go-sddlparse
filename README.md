@@ -1,4 +1,4 @@
-[![GoDoc](https://pkg.go.dev/badge/github.com/go-ldap/ldap?utm_source=godoc)](https://pkg.go.dev/github.com/huner2/go-sddlparse)
+[![GoDoc](https://pkg.go.dev/badge/github.com/go-ldap/ldap?utm_source=godoc)](https://pkg.go.dev/github.com/huner2/go-sddlparse/v2)
 
 # ACL and SDDL parsing functionality for Windows and ActiveDirectory ACLs in Go
 
