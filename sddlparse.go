@@ -245,7 +245,7 @@ func aclToBytes(acl ACL) ([]byte, error) {
 //   - The SACL or DACL is invalid (if present)
 //   - An unknown or unhandled ACE type is encountered
 func SDDLFromBinary(data []byte) (*SDDL, error) {
-	if len(data) < 16 {
+	if len(data) < 20 {
 		return nil, errors.New(errInvalidSDDL)
 	}
 	if data[0] != 0x01 {
